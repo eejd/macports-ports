@@ -92,7 +92,17 @@ destroot {
     ln -s ${prefix}/lib/node_modules/${name}/dist/index.js \
         ${destroot}${prefix}/bin/${name}
 }
-
+post-destroot {
+    # SECURITY: The shipped config.json5 defaults to
+    #   autoApprovePermissions: ["read", "mcp"]
+    # The "read" entry causes the Copilot SDK to silently auto-approve all
+    # file-read requests from its built-in file tools, which triggers macOS
+    # TCC permission dialogs for Photos, Music, Documents, etc. on first use.
+    # Restrict to "mcp" only (Xcode MCP tool calls) so that the user is
+    # always prompted before any filesystem access is granted.
+    set cfg ${destroot}${prefix}/lib/node_modules/${name}/config.json5
+    reinplace {s|autoApprovePermissions: \["read", "mcp"\]|autoApprovePermissions: ["mcp"]|} ${cfg}
+}
 notes "
 === Authentication ===
 
@@ -215,7 +225,27 @@ Check agent status:
   launchctl list | grep ${name}
 
 See '${name} --help' for the full CLI reference.
+=== Privacy & permissions ===
 
+The server ships a config file at:
+  ${prefix}/lib/node_modules/${name}/config.json5
+
+Security defaults applied by this port:
+  autoApprovePermissions: \[\"mcp\"\]   # Xcode MCP tool calls only
+
+The original npm tarball defaults to \[\"read\", \"mcp\"\]. The \"read\" entry
+causes the Copilot SDK to silently auto-approve all file-read requests from
+its built-in file tools, which in turn triggers macOS TCC permission dialogs
+for Photos, Music, Documents, and other protected directories on first use.
+This port patches the default to \[\"mcp\"\] during installation.
+
+Edit config.json5 to fine-tune other settings such as:
+  allowedTools: \[\"*\"\]   # which Xcode MCP tools the model may call
+Change \"*\" to an explicit list if you want to restrict tool access, e.g.:
+  allowedTools: \[\"createFile\", \"readFile\", \"editFile\"\]
+
+Note: changes to config.json5 are preserved across minor updates but will
+be reset if you run 'port reinstall ${name}'.
 === Node.js version note ===
 
 Upstream requires Node.js >= 25.6.0. This port uses nodejs24, which is
