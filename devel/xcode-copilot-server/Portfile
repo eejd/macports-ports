@@ -194,6 +194,23 @@ When running as a launchd agent, logs are written to:
 Follow live:
   tail -f ~/Library/Logs/${name}.out.log
 
+Temporarily switch to debug logging without reinstalling:
+  /usr/libexec/PlistBuddy -c 'Set :ProgramArguments:6 debug' \\
+    ~/Library/LaunchAgents/com.${name}.plist
+  launchctl unload ~/Library/LaunchAgents/com.${name}.plist
+  launchctl load   ~/Library/LaunchAgents/com.${name}.plist
+  # Restore:
+  /usr/libexec/PlistBuddy -c 'Set :ProgramArguments:6 info' \\
+    ~/Library/LaunchAgents/com.${name}.plist
+  launchctl unload ~/Library/LaunchAgents/com.${name}.plist
+  launchctl load   ~/Library/LaunchAgents/com.${name}.plist
+
+  CAUTION: index 6 is the level value; index 5 is the '--log-level' flag.
+  Editing the wrong index corrupts the plist and prevents startup.
+  Verify by checking ProgramArguments:
+    /usr/libexec/PlistBuddy -c 'Print :ProgramArguments' \\
+      ~/Library/LaunchAgents/com.${name}.plist
+
 Check agent status:
   launchctl list | grep ${name}
 
