@@ -109,21 +109,56 @@ NOTE — VS Code Copilot credentials are NOT shared:
   private Keychain entries). You must authenticate separately using one of
   the methods above.
 
-=== Usage ===
+=== Running modes ===
 
-Start the server (registers all providers, auto mode):
-  ${name}
+OPTION A — Manual (foreground, useful for testing):
 
-Start a single provider:
-  ${name} --proxy openai    # Custom model provider
-  ${name} --proxy claude    # Claude Agent backend
-  ${name} --proxy codex     # Codex Agent backend
+  ${name}                          # all providers, port 8080
+  ${name} --proxy openai           # custom model provider only
+  ${name} --proxy claude           # Claude Agent backend only
+  ${name} --proxy codex            # Codex Agent backend only
+  ${name} --port 9090              # use a different port
 
-Install as a launchd agent (starts automatically on demand):
+OPTION B — Launchd agent (recommended for daily use):
+
   ${name} install-agent
 
-Uninstall the launchd agent:
-  ${name} uninstall-agent
+  Uses macOS socket activation: launchd owns the socket on port 8080
+  and starts the server only when Xcode connects. After --idle-timeout
+  minutes of inactivity (default: 60) the server shuts itself down;
+  launchd will restart it on the next connection. Run install-agent
+  once; it persists across reboots without keeping a terminal open.
+
+  Options (passed at install time, embedded in the plist):
+    --port <number>          port to listen on (default: 8080)
+    --proxy <provider>       openai, claude, codex, or all (default: all)
+    --idle-timeout <minutes> inactivity shutdown (default: 60)
+    --log-level <level>      debug, info, warn, error (default: info)
+
+  Note: PATH is captured from your current shell environment at install
+  time and embedded in the plist. Run install-agent from a shell that
+  has your normal PATH (i.e. a login shell, not from a locked screen).
+
+  To start at login instead of on-demand, add RunAtLoad to the plist:
+    /usr/libexec/PlistBuddy -c 'Add :RunAtLoad bool true' \\
+      ~/Library/LaunchAgents/com.${name}.plist
+    launchctl unload ~/Library/LaunchAgents/com.${name}.plist
+    launchctl load  ~/Library/LaunchAgents/com.${name}.plist
+
+  Uninstall the agent:
+    ${name} uninstall-agent
+
+=== Logs ===
+
+When running as a launchd agent, logs are written to:
+  ~/Library/Logs/${name}.out.log   (stdout / server events)
+  ~/Library/Logs/${name}.err.log   (stderr / SDK warnings)
+
+Follow live:
+  tail -f ~/Library/Logs/${name}.out.log
+
+Check agent status:
+  launchctl list | grep ${name}
 
 See '${name} --help' for the full CLI reference.
 
