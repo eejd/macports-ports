@@ -1,0 +1,100 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+
+name                xcode-copilot-server
+version             3.4.0
+revision            0
+
+categories          devel
+license             MIT
+maintainers         {@eejd} openmaintainer
+
+description         GitHub Copilot proxy server for Xcode's AI coding features
+
+long_description    ${name} is a proxy API server that lets you use GitHub \
+                    Copilot as an LLM provider in Xcode. It wraps the GitHub \
+                    Copilot SDK and exposes it as an OpenAI-compatible, \
+                    Anthropic-compatible, or OpenAI Responses-compatible API \
+                    on localhost, allowing Xcode to use Copilot as a custom \
+                    model provider or as the backend for Claude Agent and \
+                    Codex Agent. Supports launchd socket activation for \
+                    on-demand background operation.
+
+homepage            https://github.com/theblixguy/xcode-copilot-server
+
+master_sites        https://registry.npmjs.org/${name}/-/
+
+distname            ${name}-${version}
+extract.suffix      .tgz
+
+checksums           rmd160  a92e4e4fff874905babcb99c3622e7c8486453fa \
+                    sha256  152b617cd329c73f0a930d85a1ece5137aa000940d62caa8448d997b0bdf3f20 \
+                    size    76019
+
+worksrcdir          package
+
+# Upstream requires Node.js >= 25.6.0 (see .node-version and package.json
+# engines field). nodejs24 is the closest currently available in MacPorts;
+# update this dependency to nodejs25 once that port is available.
+depends_lib         path:bin/node:nodejs24
+depends_build       path:bin/npm:npm11
+
+use_configure       no
+
+build {
+    # Install only production (runtime) dependencies.
+    # This also triggers koffi's postinstall to download its prebuilt native
+    # binary for the current platform.
+    system -W ${worksrcpath} "${prefix}/bin/npm install --omit=dev"
+}
+
+post-build {
+    # Replace the generic env-based shebang with the MacPorts node path so
+    # the script uses the port's Node.js installation at runtime.
+    reinplace "s|#!/usr/bin/env node|#!${prefix}/bin/node|" \
+        ${worksrcpath}/dist/index.js
+}
+
+destroot {
+    set nm_dir ${destroot}${prefix}/lib/node_modules
+
+    # Create node_modules directory and copy the package tree (dist/, scripts/,
+    # config.json5, package.json, and installed node_modules/) into it.
+    xinstall -d ${nm_dir}
+    file copy ${worksrcpath} ${nm_dir}/${name}
+
+    # Ensure the main entry-point is executable.
+    file attributes ${nm_dir}/${name}/dist/index.js -permissions 0755
+
+    # Expose the binary via the standard MacPorts bin directory.
+    ln -s ${prefix}/lib/node_modules/${name}/dist/index.js \
+        ${destroot}${prefix}/bin/${name}
+}
+
+notes "
+To use ${name} you need a GitHub Copilot subscription and must authenticate
+with one of the following before starting the server:
+
+  copilot login   # GitHub Copilot CLI
+  gh auth login   # GitHub CLI
+
+Or export a fine-grained Copilot access token as GITHUB_TOKEN.
+
+Start the server (all providers, auto mode):
+  ${name}
+
+Install as a launchd agent (starts on demand):
+  ${name} install-agent
+
+See 'man ${name}' or '${name} --help' for full CLI reference.
+
+NOTE: Upstream requires Node.js >= 25.6.0. This port uses nodejs24, which
+is the closest version currently available in MacPorts. If you encounter
+compatibility issues, consider installing a newer Node.js via nvm or
+homebrew until a nodejs25 port is available.
+"
+
+livecheck.type      regex
+livecheck.url       https://registry.npmjs.org/${name}
+livecheck.regex     {"latest":"(.*?)"}
