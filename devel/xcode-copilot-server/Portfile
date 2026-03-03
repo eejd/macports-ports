@@ -56,6 +56,27 @@ post-build {
         ${worksrcpath}/dist/index.js
 }
 
+test {
+    # 1. CLI reports the expected version (no network or auth required).
+    set out [string trim [exec ${prefix}/bin/node ${worksrcpath}/dist/index.js --version]]
+    if {${out} ne ${version}} {
+        return -code error "${name} --version reported '${out}', expected '${version}'"
+    }
+
+    # 2. Bundled Copilot SDK is present — confirms npm install succeeded.
+    if {![file exists ${worksrcpath}/node_modules/@github/copilot/index.js]} {
+        return -code error "Copilot SDK missing: node_modules/@github/copilot/index.js not found"
+    }
+
+    # 3. Shebang was patched to the MacPorts node binary.
+    set fd [open ${worksrcpath}/dist/index.js r]
+    set shebang [gets ${fd}]
+    close ${fd}
+    if {${shebang} ne "#!${prefix}/bin/node"} {
+        return -code error "shebang not patched: got '${shebang}'"
+    }
+}
+
 destroot {
     set nm_dir ${destroot}${prefix}/lib/node_modules
 
