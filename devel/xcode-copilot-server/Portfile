@@ -135,9 +135,25 @@ OPTION B — Launchd agent (recommended for daily use):
     --idle-timeout <minutes> inactivity shutdown (default: 60)
     --log-level <level>      debug, info, warn, error (default: info)
 
-  Note: PATH is captured from your current shell environment at install
-  time and embedded in the plist. Run install-agent from a shell that
-  has your normal PATH (i.e. a login shell, not from a locked screen).
+  IMPORTANT — do NOT run install-agent from a VS Code integrated terminal.
+  VS Code injects its own copilotCli extension path into the shell PATH, and
+  that path gets baked into the launchd plist. The agent will then use VS
+  Code's bundled Copilot CLI binary rather than the one shipped with this
+  port, creating a hidden dependency on VS Code remaining installed and its
+  extension staying at the same path.
+
+  Always run install-agent from a plain Terminal.app or iTerm2 session that
+  does not have VS Code's PATH additions. If you already installed the agent
+  from a VS Code terminal, fix the plist PATH in place:
+
+    /usr/libexec/PlistBuddy -c \\
+      'Set :EnvironmentVariables:PATH ${prefix}/bin:${prefix}/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' \\
+      ~/Library/LaunchAgents/com.${name}.plist
+    launchctl unload ~/Library/LaunchAgents/com.${name}.plist
+    launchctl load  ~/Library/LaunchAgents/com.${name}.plist
+
+  Verify the fix: ps aux | grep copilot — the SDK subprocess path should
+  show .../node_modules/@github/copilot/index.js, NOT .../copilotCli/...
 
   To start at login instead of on-demand, add RunAtLoad to the plist:
     /usr/libexec/PlistBuddy -c 'Add :RunAtLoad bool true' \\
