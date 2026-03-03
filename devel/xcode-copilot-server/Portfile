@@ -54,9 +54,7 @@ post-build {
     # the script uses the port's Node.js installation at runtime.
     reinplace "s|#!/usr/bin/env node|#!${prefix}/bin/node|" \
         ${worksrcpath}/dist/index.js
-}
 
-post-build {
     # +bash_mcp: install bash-mcp into the package's node_modules so it is
     # available at runtime without network access or npx.
     if {[variant_isset bash_mcp]} {
@@ -127,8 +125,8 @@ post-destroot {
         set fd [open ${cfg} r]
         set content [read ${fd}]
         close ${fd}
-        set old_entry "      allowedTools: \[\"*\"\],\n      },\n    },"
-        set new_entry "      allowedTools: \[\"*\"\],\n      },\n      bash: \{\n        type: \"local\",\n        command: \"${prefix}/bin/node\",\n        args: \[\"${prefix}/lib/node_modules/${name}/node_modules/bash-mcp/index.js\"\],\n      },\n    },"
+        set old_entry "      allowedTools: \[\"*\"\],\n      \},\n    \},"
+        set new_entry "      allowedTools: \[\"*\"\],\n      \},\n      bash: \{\n        type: \"local\",\n        command: \"${prefix}/bin/node\",\n        args: \[\"${prefix}/lib/node_modules/${name}/node_modules/bash-mcp/index.js\"\],\n      \},\n    \},"
         set content [string map [list ${old_entry} ${new_entry}] ${content}]
         set fd [open ${cfg} w]
         puts -nonewline ${fd} ${content}
@@ -292,16 +290,16 @@ commands (git, grep, make, etc.) in addition to using Xcode's built-in
 file and index tools.
 
 Permissions with +bash_mcp:
-  autoApprovePermissions: []   # prompt for every MCP tool call
+  autoApprovePermissions: \[\]   # prompt for every MCP tool call
 
 Since bash-mcp tool calls and xcrun mcpbridge tool calls share the same
-"mcp" permission kind, there is no way to approve Xcode tools silently
+\"mcp\" permission kind, there is no way to approve Xcode tools silently
 while prompting only for shell commands.  Setting autoApprovePermissions
-to [] means you will be prompted for both.  This matches VS Code's default
+to \[\] means you will be prompted for both.  This matches VS Code's default
 behaviour where shell execution requires an explicit user confirmation.
 
-If you find the mcpbridge prompts too noisy, add "mcp" back:
-  autoApprovePermissions: ["mcp"]   # silent for all MCP calls
+If you find the mcpbridge prompts too noisy, add \"mcp\" back:
+  autoApprovePermissions: \[\"mcp\"\]   # silent for all MCP calls
 
 Or narrow it if a future release of the Copilot SDK introduces separate
 permission kinds for shell vs MCP tools.
