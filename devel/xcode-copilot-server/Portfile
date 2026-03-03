@@ -73,26 +73,67 @@ destroot {
 }
 
 notes "
-To use ${name} you need a GitHub Copilot subscription and must authenticate
-with one of the following before starting the server:
+=== Authentication ===
 
-  copilot login   # GitHub Copilot CLI
-  gh auth login   # GitHub CLI
+${name} requires a GitHub Copilot subscription. You must authenticate
+before starting the server. Choose one of the following methods:
 
-Or export a fine-grained Copilot access token as GITHUB_TOKEN.
+RECOMMENDED — GitHub CLI (port:gh):
 
-Start the server (all providers, auto mode):
+  sudo port install gh
+  gh auth login
+
+  This stores a token in the macOS Keychain and is the most seamless option.
+  It also works automatically when the server is installed as a launchd agent.
+
+ALTERNATIVE — Environment variable:
+
+  Create a GitHub personal access token at https://github.com/settings/tokens
+  with Copilot access (classic PAT: no special scope needed beyond your
+  Copilot subscription; fine-grained PAT: enable GitHub Copilot permission).
+  Then export it in your shell startup file:
+
+    export GITHUB_TOKEN=your_token_here
+
+  For the launchd agent, set it before installing:
+
+    launchctl setenv GITHUB_TOKEN your_token_here
+    ${name} install-agent
+
+  NOTE: If you export GITHUB_TOKEN, it will be embedded in the agent plist
+  at ~/Library/LaunchAgents/. Set appropriate file permissions if concerned.
+
+NOTE — VS Code Copilot credentials are NOT shared:
+  Even if you are already authenticated with GitHub Copilot in VS Code,
+  ${name} cannot access those credentials (VS Code stores them in its own
+  private Keychain entries). You must authenticate separately using one of
+  the methods above.
+
+=== Usage ===
+
+Start the server (registers all providers, auto mode):
   ${name}
 
-Install as a launchd agent (starts on demand):
+Start a single provider:
+  ${name} --proxy openai    # Custom model provider
+  ${name} --proxy claude    # Claude Agent backend
+  ${name} --proxy codex     # Codex Agent backend
+
+Install as a launchd agent (starts automatically on demand):
   ${name} install-agent
 
-See 'man ${name}' or '${name} --help' for full CLI reference.
+Uninstall the launchd agent:
+  ${name} uninstall-agent
 
-NOTE: Upstream requires Node.js >= 25.6.0. This port uses nodejs24, which
-is the closest version currently available in MacPorts. If you encounter
-compatibility issues, consider installing a newer Node.js via nvm or
-homebrew until a nodejs25 port is available.
+See '${name} --help' for the full CLI reference.
+
+=== Node.js version note ===
+
+Upstream requires Node.js >= 25.6.0. This port uses nodejs24, which is
+the closest version currently available in MacPorts. The server should
+work correctly; the EBADENGINE warning from npm during install is expected
+and harmless. Update this port's dependency to nodejs25 once that port
+becomes available in MacPorts.
 "
 
 livecheck.type      regex
