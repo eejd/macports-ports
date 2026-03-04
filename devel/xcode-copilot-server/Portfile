@@ -150,19 +150,19 @@ post-destroot {
     # SDK then tries to run it, hits a "shell: denied" permission response, and
     # crashes with TypeError: Cannot read properties of undefined (reading 'map')
     # inside its own bash-tool error-handling path.
-    # Fix 1: guard the allowlist check so only MCP-prefixed tool names (those
-    # starting with "mcp__", i.e. tools that actually came from an MCP server)
-    # are matched by the wildcard.  SDK built-in tools like "bash" never start
-    # with "mcp__" and fall through to the deny branch.
+    # Fix 1: guard the allowlist check using the MCP server name prefix.  Inside
+    # the SDK, MCP tools are named "<serverName>-<toolName>" (e.g. "bash-run" for
+    # the "bash" server's "run" tool).  SDK built-in tools like "bash" do not use
+    # this prefix format, so they fall through to the deny branch.
     # Fix 2: when the deny branch is reached, return an explanatory reason so the
-    # model understands it should use the MCP equivalent tool (mcp__bash__run)
+    # model understands it should use the MCP equivalent tool (e.g. "bash-run")
     # instead of giving up and reporting it has no tools available.
     set sdk_cfg ${destroot}${prefix}/lib/node_modules/${name}/node_modules/copilot-sdk-proxy/dist/providers/shared/session-config.js
     set fd [open ${sdk_cfg} r]
     set content [read ${fd}]
     close ${fd}
     set old_check "if (allowlist.includes(\"*\") || allowlist.includes(toolName)) \{"
-    set new_check "if (toolName.startsWith(\"mcp__\") && (allowlist.includes(\"*\") || allowlist.includes(toolName))) \{"
+    set new_check "if (toolName.startsWith(serverName + \"-\") && (allowlist.includes(\"*\") || allowlist.includes(toolName))) \{"
     set content [string map [list ${old_check} ${new_check}] ${content}]
     # When the model picks a built-in CLI tool (e.g. "bash") instead of its MCP
     # counterpart (e.g. "mcp__bash__run"), the hook denies it with no explanation,
