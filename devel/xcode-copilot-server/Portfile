@@ -157,6 +157,11 @@ post-destroot {
     # Fix 2: when the deny branch is reached, return an explanatory reason so the
     # model understands it should use the MCP equivalent tool (e.g. "bash-run")
     # instead of giving up and reporting it has no tools available.
+    # Fix 3: the hook defaults server.allowedTools to [] (deny all) when the field
+    # is absent.  MCP server configs in config.json5 have no allowedTools entry, so
+    # every MCP tool is denied.  Default to ["*"] so a server with no explicit
+    # allowedTools allows all its tools — the serverName prefix check already
+    # ensures only genuine MCP calls from that server reach this point.
     set sdk_cfg ${destroot}${prefix}/lib/node_modules/${name}/node_modules/copilot-sdk-proxy/dist/providers/shared/session-config.js
     set fd [open ${sdk_cfg} r]
     set content [read ${fd}]
@@ -171,6 +176,9 @@ post-destroot {
     set old_deny "                return Promise.resolve(\{ permissionDecision: \"deny\" \});"
     set new_deny "                const mcpAlternative = Object.keys(config.mcpServers).length > 0\n                    ? ` Use an MCP tool (mcp__<server>__<tool>) instead.`\n                    : \"\";\n                return Promise.resolve(\{ permissionDecision: \"deny\", permissionDecisionReason: `Built-in CLI tools are not enabled.\${mcpAlternative}` \});"
     set content [string map [list ${old_deny} ${new_deny}] ${content}]
+    set old_allowlist "                    const allowlist = server.allowedTools ?? \[\];"
+    set new_allowlist "                    const allowlist = server.allowedTools ?? \[\"*\"\];"
+    set content [string map [list ${old_allowlist} ${new_allowlist}] ${content}]
     set fd [open ${sdk_cfg} w]
     puts -nonewline ${fd} ${content}
     close ${fd}
