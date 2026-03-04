@@ -161,6 +161,16 @@ post-destroot {
     set old_check "if (allowlist.includes(\"*\") || allowlist.includes(toolName)) \{"
     set new_check "if (toolName.startsWith(\"mcp__\") && (allowlist.includes(\"*\") || allowlist.includes(toolName))) \{"
     set content [string map [list ${old_check} ${new_check}] ${content}]
+    # copilot-sdk-proxy only sets availableTools when allowedCliTools is non-empty
+    # (length > 0 guard).  With allowedCliTools: [] the SDK exposes all of its
+    # own built-in tools (bash, glob, view, …) to the model — the model then calls
+    # the built-in "bash" instead of mcp__bash__run and gets denied.
+    # Fix: always pass availableTools: [] when allowedCliTools is empty, which
+    # tells the SDK to make no built-in tools available so the model uses the MCP
+    # server tools exclusively.
+    set old_avail "        ...(config.allowedCliTools.length > 0 && \{\n            availableTools: config.allowedCliTools,\n        \}),"
+    set new_avail "        availableTools: config.allowedCliTools,"
+    set content [string map [list ${old_avail} ${new_avail}] ${content}]
     set fd [open ${sdk_cfg} w]
     puts -nonewline ${fd} ${content}
     close ${fd}
