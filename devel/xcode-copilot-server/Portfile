@@ -131,6 +131,13 @@ post-destroot {
         set fd [open ${cfg} w]
         puts -nonewline ${fd} ${content}
         close ${fd}
+        # bash-mcp's list_background tool omits the required[] field in its
+        # inputSchema.  Xcode's MCP client calls .map() on that field without
+        # a guard, throwing "Cannot read properties of undefined (reading 'map')".
+        # Patch the installed copy to add required: [] so Xcode can enumerate
+        # the tool list without crashing.
+        reinplace {s|properties: {},|properties: {},\n        required: [],|} \
+            ${destroot}${prefix}/lib/node_modules/${name}/node_modules/bash-mcp/index.js
     } else {
         reinplace {s|autoApprovePermissions: \["read", "mcp"\]|autoApprovePermissions: ["mcp"]|} ${cfg}
     }
