@@ -141,6 +141,27 @@ post-destroot {
     } else {
         reinplace {s|autoApprovePermissions: \["read", "mcp"\]|autoApprovePermissions: ["mcp"]|} ${cfg}
     }
+    # copilot-sdk-proxy's onPreToolUse hook loops over all MCP servers and
+    # allows any tool whose name appears in a server's allowedTools list.
+    # Because the xcode MCP server has allowedTools: ["*"], the Copilot SDK's
+    # own built-in "bash" tool is erroneously allowed via that wildcard.  The
+    # SDK then tries to run it, hits a "shell: denied" permission response, and
+    # crashes with TypeError: Cannot read properties of undefined (reading 'map')
+    # inside its own bash-tool error-handling path.
+    # Fix: guard the allowlist check so only MCP-prefixed tool names (those
+    # starting with "mcp__", i.e. tools that actually came from an MCP server)
+    # are matched by the wildcard.  SDK built-in tools like "bash" never start
+    # with "mcp__" and fall through to the deny branch.
+    set sdk_cfg ${destroot}${prefix}/lib/node_modules/${name}/node_modules/copilot-sdk-proxy/dist/providers/shared/session-config.js
+    set fd [open ${sdk_cfg} r]
+    set content [read ${fd}]
+    close ${fd}
+    set old_check "if (allowlist.includes(\"*\") || allowlist.includes(toolName)) \{"
+    set new_check "if (toolName.startsWith(\"mcp__\") && (allowlist.includes(\"*\") || allowlist.includes(toolName))) \{"
+    set content [string map [list ${old_check} ${new_check}] ${content}]
+    set fd [open ${sdk_cfg} w]
+    puts -nonewline ${fd} ${content}
+    close ${fd}
 }
 notes "
 === Authentication ===
