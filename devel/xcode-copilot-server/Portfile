@@ -150,10 +150,13 @@ post-destroot {
     # SDK then tries to run it, hits a "shell: denied" permission response, and
     # crashes with TypeError: Cannot read properties of undefined (reading 'map')
     # inside its own bash-tool error-handling path.
-    # Fix: guard the allowlist check so only MCP-prefixed tool names (those
+    # Fix 1: guard the allowlist check so only MCP-prefixed tool names (those
     # starting with "mcp__", i.e. tools that actually came from an MCP server)
     # are matched by the wildcard.  SDK built-in tools like "bash" never start
     # with "mcp__" and fall through to the deny branch.
+    # Fix 2: when the deny branch is reached, return an explanatory reason so the
+    # model understands it should use the MCP equivalent tool (mcp__bash__run)
+    # instead of giving up and reporting it has no tools available.
     set sdk_cfg ${destroot}${prefix}/lib/node_modules/${name}/node_modules/copilot-sdk-proxy/dist/providers/shared/session-config.js
     set fd [open ${sdk_cfg} r]
     set content [read ${fd}]
@@ -161,16 +164,13 @@ post-destroot {
     set old_check "if (allowlist.includes(\"*\") || allowlist.includes(toolName)) \{"
     set new_check "if (toolName.startsWith(\"mcp__\") && (allowlist.includes(\"*\") || allowlist.includes(toolName))) \{"
     set content [string map [list ${old_check} ${new_check}] ${content}]
-    # copilot-sdk-proxy only sets availableTools when allowedCliTools is non-empty
-    # (length > 0 guard).  With allowedCliTools: [] the SDK exposes all of its
-    # own built-in tools (bash, glob, view, …) to the model — the model then calls
-    # the built-in "bash" instead of mcp__bash__run and gets denied.
-    # Fix: always pass availableTools: [] when allowedCliTools is empty, which
-    # tells the SDK to make no built-in tools available so the model uses the MCP
-    # server tools exclusively.
-    set old_avail "        ...(config.allowedCliTools.length > 0 && \{\n            availableTools: config.allowedCliTools,\n        \}),"
-    set new_avail "        availableTools: config.allowedCliTools,"
-    set content [string map [list ${old_avail} ${new_avail}] ${content}]
+    # When the model picks a built-in CLI tool (e.g. "bash") instead of its MCP
+    # counterpart (e.g. "mcp__bash__run"), the hook denies it with no explanation,
+    # the model gives up and reports having no tools.  Add a helpful reason so the
+    # model understands it should retry with the MCP tool instead.
+    set old_deny "                return Promise.resolve(\{ permissionDecision: \"deny\" \});"
+    set new_deny "                const mcpAlternative = Object.keys(config.mcpServers).length > 0\n                    ? ` Use an MCP tool (mcp__<server>__<tool>) instead.`\n                    : \"\";\n                return Promise.resolve(\{ permissionDecision: \"deny\", permissionDecisionReason: `Built-in CLI tools are not enabled.\${mcpAlternative}` \});"
+    set content [string map [list ${old_deny} ${new_deny}] ${content}]
     set fd [open ${sdk_cfg} w]
     puts -nonewline ${fd} ${content}
     close ${fd}
