@@ -170,11 +170,11 @@ post-destroot {
     set new_check "if (toolName.startsWith(serverName + \"-\") && (allowlist.includes(\"*\") || allowlist.includes(toolName))) \{"
     set content [string map [list ${old_check} ${new_check}] ${content}]
     # When the model picks a built-in CLI tool (e.g. "bash") instead of its MCP
-    # counterpart (e.g. "mcp__bash__run"), the hook denies it with no explanation,
+    # counterpart (e.g. "bash-run"), the hook denies it with no explanation,
     # the model gives up and reports having no tools.  Add a helpful reason so the
-    # model understands it should retry with the MCP tool instead.
+    # model understands it should retry with the correct MCP tool name.
     set old_deny "                return Promise.resolve(\{ permissionDecision: \"deny\" \});"
-    set new_deny "                const mcpAlternative = Object.keys(config.mcpServers).length > 0\n                    ? ` Use an MCP tool (mcp__<server>__<tool>) instead.`\n                    : \"\";\n                return Promise.resolve(\{ permissionDecision: \"deny\", permissionDecisionReason: `Built-in CLI tools are not enabled.\${mcpAlternative}` \});"
+    set new_deny "                const mcpAlternative = Object.keys(config.mcpServers).length > 0\n                    ? ` Use an MCP tool (<serverName>-<toolName>) instead.`\n                    : \"\";\n                return Promise.resolve(\{ permissionDecision: \"deny\", permissionDecisionReason: `Built-in CLI tools are not enabled.\${mcpAlternative}` \});"
     set content [string map [list ${old_deny} ${new_deny}] ${content}]
     set old_allowlist "                    const allowlist = server.allowedTools ?? \[\];"
     set new_allowlist "                    const allowlist = server.allowedTools ?? \[\"*\"\];"
