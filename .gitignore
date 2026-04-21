@@ -1,11 +1,16 @@
+# Ignore MacPorts build products and temporary files
 /PortIndex
 /PortIndex.quick
-
 */*/work
 
+# Ignore backup files created by text editors
 Portfile~
 *.tcl~
 *.diff~
 *.patch~
 
+# Ignore MacOS metadata files and workspace files
 .DS_Store
+
+# Ignore Visual Studio Code workspace files
+macports-ports.code-workspace
