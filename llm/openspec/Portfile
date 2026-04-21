@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           npm 1.0
 
 name                openspec
-version             1.0.2
+version             1.3.0
 revision            0
 
 categories          llm
@@ -23,6 +23,6 @@ homepage            https://openspec.dev
 npm.rootname        @fission-ai/${name}
 distname            ${name}-${version}
 
-checksums           rmd160  36766035edc3a8139a9c8597b72c0acd25427d78 \
-                    sha256  f0e95d723d2120f14bdc1ff8f3a587179a177037de44cdad1bb1793ada6a4579 \
-                    size    188003
+checksums           rmd160  ae329279864ec3fa4b6e35ff1fec786b46e86bed \
+                    sha256  7e0245e638db3b494aa5e4c49c359688fe6a0cabe7dbe2d6c28fd730582e8e6e \
+                    size    207735

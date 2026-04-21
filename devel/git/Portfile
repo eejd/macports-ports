@@ -11,7 +11,7 @@ legacysupport.newest_darwin_requires_legacy 11
 name                git
 # NOTE: Update the DEVEL version first before updating this RELEASE version,
 #       to verify that the intended version builds on all platforms.
-version             2.52.0
+version             2.54.0
 revision            0
 
 description         A fast version control system
@@ -23,9 +23,10 @@ long_description    Git is a fast, scalable, distributed open source version \
 subport ${name}-devel {
     PortGroup           github  1.0
 
-    github.setup        git git 2.52.0 v
+    github.setup        git git 2.54.0 v
     github.tarball_from archive
     revision            0
+    epoch               1
 
     description     \
         {*}${description} (Development Version)
@@ -60,13 +61,13 @@ if {${name} eq ${subport}} {
                     git-manpages-${version}${extract.suffix}
 
     checksums       git-${version}${extract.suffix} \
-                    rmd160  2cc7283f8e9ee453b658a2c6309f9751f62f1089 \
-                    sha256  3cd8fee86f69a949cb610fee8cd9264e6873d07fa58411f6060b3d62729ed7c5 \
-                    size    7957064 \
+                    rmd160  235e9c66651cdb2ae32f4221a358a3e759532e4b \
+                    sha256  f689162364c10de79ef89aa8dbf48731eb057e34edbbd20aca510ce0154681a3 \
+                    size    8126372 \
                     git-manpages-${version}${extract.suffix} \
-                    rmd160  a0f5aa8c561291735b862c38e50ec2c6d8581678 \
-                    sha256  23186deddb3083bbaa9eb947cde26a5c7322d7fdb75bb4b3d60795db38221ac5 \
-                    size    607864
+                    rmd160  2ea4d9b71c0973917e2cf5fde6b60aa3dce89d5f \
+                    sha256  292062d18f3a215213ea8317ed22b94f02ad9572520b9293164d7db3eb888953 \
+                    size    622912
 
     extract.only    git-${version}${extract.suffix} \
                     git-manpages-${version}${extract.suffix}
@@ -86,9 +87,9 @@ if {${name} eq ${subport}} {
     # DEVELOPMENT VERSION
 
     checksums       ${distname}${extract.suffix} \
-                    rmd160  0bb54d1abb31381e972c64810bf59d6a6454609d \
-                    sha256  da8be57afb73a2370a5a891405b5e5624562f07a5c041f9e827e75320dc61114 \
-                    size    11894765
+                    rmd160  1b0a32a6c6fbcc66f8eaa3bf3dd30ec710ee56e3 \
+                    sha256  7b01a23c44c9ccfca2e3ad9daf8cbdd4d4caaaa6b5181e77e16e60c6ae5f772a \
+                    size    12120201
 
     depends_build-append \
                     port:asciidoc \
@@ -280,9 +281,9 @@ variant doc description {Install HTML and plaintext documentation} {
         # RELEASE
         distfiles-append    git-htmldocs-${version}${extract.suffix}
         checksums-append    git-htmldocs-${version}${extract.suffix} \
-                            rmd160  02f5cbfbb86b31a2b6dd1034da84816585b6f609 \
-                            sha256  e6efd0da47a15b6a59401c8c5c8944e4315b18a176b89bb57812778d6307be84 \
-                            size    1657524
+                            rmd160  6d5820d78ee4c55fe0a25b9d50aba1101658e937 \
+                            sha256  7ff72bfdfed4f20563f34416cf27614fb9c35bfad590db0062f2a0a9636514e4 \
+                            size    1695136
 
         patchfiles-append   patch-git-subtree.html.diff
 
@@ -435,4 +436,3 @@ platform darwin 8 {
     build.args-append   NO_APPLE_COMMON_CRYPTO=1
     build.args-append   CC_LD_DYNPATH=-R
 }
-

@@ -6,7 +6,7 @@ PortGroup           qt6 1.0
 PortGroup           java 1.0
 PortGroup           cmake 1.1
 
-github.setup        PrismLauncher PrismLauncher 10.0.2
+github.setup        PrismLauncher PrismLauncher 11.0.1
 github.tarball_from releases
 revision            0
 categories          games
@@ -16,17 +16,22 @@ description         A custom launcher for Minecraft
 long_description    PrismLauncher is {*}${description} that allows you to easily manage \
                     multiple installations of Minecraft at once.
 homepage            https://prismlauncher.org/
+checksums           rmd160 27f4a22cad174cdeaacb91f94d5877e585f997e7 \
+                    sha256 8dc12c1d5bfd67b1e07047313c606826da0079f214a81311d6f5e24005894e8d \
+                    size 4114142
 
 platforms           {darwin >= 21}
 
-fetch.type          git
-
-post-fetch {
-    system -W ${worksrcpath} "git submodule update --init"
-}
-
 patchfiles          patch-fetch-tomlplusplus.diff \
                     patch-destdir-qt-deploy.diff
+
+variant javadl \
+    description {Enables the integrated Java downloader} {
+    configure.args-append -DLauncher_ENABLE_JAVA_DOWNLOADER=ON
+}
+
+default_variants-append \
+                    +javadl
 
 cmake.build_type    Release
 
@@ -49,7 +54,8 @@ depends_lib-append  port:libarchive \
 
 depends_build-append \
                     path:share/ECM/cmake/ECMConfig.cmake:kde-extra-cmake-modules \
-                    port:pkgconfig
+                    port:pkgconfig \
+                    port:vulkan-headers
 
 cmake.install_prefix \
                     ${applications_dir}
@@ -59,4 +65,3 @@ configure.pre_args-replace \
 configure.args-append \
                     -DLauncher_BUILD_PLATFORM=macports \
                     -DMACOSX_SPARKLE_UPDATE_FEED_URL= \
-                    -DLauncher_ENABLE_JAVA_DOWNLOADER=ON

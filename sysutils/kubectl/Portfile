@@ -11,7 +11,6 @@ homepage                https://kubectl.docs.kubernetes.io/
 installs_libs           no
 
 maintainers             {@patarra gmail.com:patarra} \
-                        @pedrohdz \
                         {gmail.com:herby.gillot @herbygillot} \
                         openmaintainer
 
@@ -32,11 +31,11 @@ subport kubectl-1.35 {
     supported_archs     x86_64 arm64
     platforms           {darwin >= 17}
 
-    set patchNumber     0
+    set patchNumber     4
     revision            0
-    checksums           rmd160  06c6695cff5e467287d2c83c44fcea19c324d634 \
-                        sha256  ed32a4da18f41f8cde7d8484afafc76b6a008915425f69440228d8e63d3f420d \
-                        size    42076423
+    checksums           rmd160  9c650123b98a1e21c540fc420ff11f4a1d1c4b47 \
+                        sha256  46a0dead69674fb2bdf33f5ef1deadab123a96becfafef6043f399ae53761f4f \
+                        size    39165150
 }
 
 subport kubectl-1.34 {
@@ -45,11 +44,11 @@ subport kubectl-1.34 {
     supported_archs     x86_64 arm64
     platforms           {darwin >= 17}
 
-    set patchNumber     3
+    set patchNumber     7
     revision            0
-    checksums           rmd160  7ba2b1a759da058351fb7e95c566cb7ac2f285d4 \
-                        sha256  d95f59700bf9d059b261ee2e0a34187301c734d596307e8dfe66c4c68c1a565d \
-                        size    38087990
+    checksums           rmd160  128e1666761ed2d568732fb0c62017fe2a33e266 \
+                        sha256  764f22a1c1f6e90c2de1b3075a8c34f6d365d6f08c56eefe7020e5da20bdd3a3 \
+                        size    38346552
 }
 
 subport kubectl-1.33 {
@@ -58,11 +57,11 @@ subport kubectl-1.33 {
     supported_archs     x86_64 arm64
     platforms           {darwin >= 17}
 
-    set patchNumber     7
+    set patchNumber     11
     revision            0
-    checksums           rmd160  444999cb45da1bdf73267b8e93e69862ffd5fe62 \
-                        sha256  3387b8de7a7a4a466cc6b76a8bbcdb9c7b55f7252a99c6e651898b0411139bbb \
-                        size    37110661
+    checksums           rmd160  654ede28636aa5a75a1cd3b527d64ba415c51212 \
+                        sha256  52461ed85b0a0ac693f5d1841e90b8c65e91e9341c253c168968db2b9d53048e \
+                        size    37381732
 }
 
 subport kubectl-1.32 {
@@ -71,11 +70,11 @@ subport kubectl-1.32 {
     supported_archs     x86_64 arm64
     platforms           {darwin >= 17}
 
-    set patchNumber     11
+    set patchNumber     13
     revision            0
-    checksums           rmd160  41ad08dbcf4e4ba705776c84d0f6d630c0f296f7 \
-                        sha256  ea0c6f0664588d9b65d43d8936e8c7273275b431298f625be2da9a29b538da34 \
-                        size    36398817
+    checksums           rmd160  15f6b01ab45e37c0f27b065284bd9096716eb3e0 \
+                        sha256  3b48c21be36b5d7e387dcd7bd1914b223b3aeb55ae7ded4cdc5244dd943accc1 \
+                        size    36396395
 }
 
 subport kubectl-1.31 {
@@ -313,7 +312,7 @@ if {${subport} == ${name}} {
     PortGroup           obsolete 1.0
 
     replaced_by         ${latestVersion}
-    version             1.35.0
+    version             1.35.4
     revision            0
 
 } elseif {${subport} == "kubectl_select"} {

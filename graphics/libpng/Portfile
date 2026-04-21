@@ -4,18 +4,18 @@ PortSystem              1.0
 PortGroup               muniversal 1.0
 
 name                    libpng
-version                 1.6.54
+version                 1.6.57
 revision                0
-checksums               rmd160  7cfd086c3150345e1a48543c0e813bf7c53c9d68 \
-                        sha256  01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805 \
-                        size    1064472
+checksums               rmd160  cded96067d6c665af75daf037ba3eabd82aca4cd \
+                        sha256  d10c20d7171569804cae8dfc13ba6dcd0662c41ed39d43d4d429314aafb10a80 \
+                        size    1069484
 
 set branch              [join [lrange [split ${version} .] 0 1] ""]
 categories              graphics
 maintainers             {ryandesign @ryandesign}
 license                 zlib
 platforms               darwin openbsd freebsd sunos linux
-homepage                http://www.libpng.org/pub/png/libpng.html
+homepage                https://www.libpng.org/pub/png/libpng.html
 use_xz                  yes
 
 description             Library for manipulating PNG images

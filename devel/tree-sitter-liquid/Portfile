@@ -4,9 +4,9 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           tree_sitter 1.0
 
-github.setup        hankthetank27 tree-sitter-liquid d6ebde3974742cd1b61b55d1d94aab1dacb41056
+github.setup        hankthetank27 tree-sitter-liquid 9566ca79911052919fce09d26f1f655b5e093857
 github.tarball_from archive
-version             20250523
+version             20260326
 revision            0
 
 description         A tree-sitter parser for Liquid
@@ -17,9 +17,9 @@ categories          devel
 license             MIT
 maintainers         {amake @amake} openmaintainer
 
-checksums           rmd160  41823f459d3009e01529fa8378d9543bd4e5cee1 \
-                    sha256  6f76b4746f368c07c219dc8d702108f3c1b30752a7b446055a928ffdfecd58a6 \
-                    size    126355
+checksums           rmd160  f998bc731b57f6b4b003f747db603f6ee28f8627 \
+                    sha256  83d50525ec5bfda37530b651a22dde21d550997c59f7314d7a563f4d912b4f29 \
+                    size    128810
 
 worksrcdir          ${worksrcdir}/src
 

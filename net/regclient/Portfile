@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/regclient/regclient 0.11.1 v
+go.setup            github.com/regclient/regclient 0.11.3 v
 go.offline_build    no
 revision            0
 
@@ -17,9 +17,9 @@ license             Apache-2
 maintainers         {icloud.com:github.ssk @suhailskhan} \
                     openmaintainer
 
-checksums           rmd160  eee7dbd09ee65ea3d20341dcf4b96c2e875d17ce \
-                    sha256  e4e5a420d41feeb6e9cd1d2bd41d6d1935e37c17c880737aefe3f67ac48f3583 \
-                    size    384761
+checksums           rmd160  705baa9f459853a0e0a551ba03a157bbb86e1198 \
+                    sha256  7d0e0655eed36269980db8df1ac6db30281e99f5bfd5ee6b498b4925cd1667b0 \
+                    size    387872
 
 pre-build {
     xinstall -d ${worksrcpath}/build/f

@@ -4,8 +4,9 @@ PortSystem          1.0
 PortGroup           muniversal 1.0
 
 name                nss
-version             3.120
+version             3.123
 revision            0
+
 set NSS_VMAJOR      [lindex [split ${version} .] 0]
 set NSS_VMINOR      [lindex [split ${version} .] 1]
 set NSS_VPATCH      [lindex [split ${version} .] 2]
@@ -26,9 +27,9 @@ set my_release      NSS_[string map {. _} ${version}]_RTM
 master_sites        https://ftp.mozilla.org/pub/security/nss/releases/${my_release}/src/ \
                     ftp://ftp.mozilla.org/pub/security/nss/releases/${my_release}/src/
 
-checksums           rmd160  41ab87547ade6dac466b7abe343941c40a536391 \
-                    sha256  7ce5f5b3a172a41539ffc118d8ef4834974d0a6a782743e4a05a4e208dd6d22f \
-                    size    77634611
+checksums           rmd160  2201a26fb34db734de47e41363bab2039b909733 \
+                    sha256  2145113398a269779a7390515a1638800836b130248e33f93243268c026d4e49 \
+                    size    77762089
 
 use_configure       no
 
@@ -126,16 +127,11 @@ use_parallel_build  no
 compiler.c_standard 1999
 configure.cflags-append -std=c99
 
-# mimic nss/coreconf/Darwin.mk
-#   Revert for the next release
-#   See: https://bugzilla.mozilla.org/show_bug.cgi?id=2005516
-patchfiles-append   patch-nss-coreconf-Darwin.mk.diff
-
 array set cpu_arch_map [list \
     arm64   aarch64 \
     ppc     ppc \
     ppc64   ppc64 \
-    i386    x86 \
+    i386    i386 \
     x86_64  x86_64]
 
 if {!${universal_possible} || ![variant_isset universal]} {
@@ -151,7 +147,7 @@ if {!${universal_possible} || ![variant_isset universal]} {
         CCC="${configure.cxx} ${configure.cxxflags} [get_canonical_archflags cxx]"
 } else {
     lappend merger_build_args(arm64)  USE_64=1 CPU_ARCH=aarch64
-    lappend merger_build_args(i386)   CPU_ARCH=x86
+    lappend merger_build_args(i386)   CPU_ARCH=i386
     lappend merger_build_args(ppc64)  USE_64=1
     lappend merger_build_args(x86_64) USE_64=1 CPU_ARCH=x86_64
 
@@ -198,11 +194,6 @@ if {${universal_possible} && [variant_isset universal]} {
             system "env DYLD_LIBRARY_PATH=${destroot}${prefix}/lib/nss ${destroot}${prefix}/bin/shlibsign -i ${base}.dylib -o ${chk}"
         }
     }
-}
-
-platform darwin 8 {
-    depends_build-append port:gmake-apple
-    build.cmd ${prefix}/bin/gmake-apple
 }
 
 livecheck.type    regex

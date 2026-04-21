@@ -3,7 +3,8 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/go-delve/delve 1.26.0 v
+go.setup            github.com/go-delve/delve 1.26.2 v
+go.offline_build    no
 revision            0
 
 description         \
@@ -22,21 +23,22 @@ license             MIT
 maintainers         {gmail.com:herby.gillot @herbygillot} \
                     openmaintainer
 
-checksums           rmd160  567125ab5853caca2118d82562ed551d012af654 \
-                    sha256  80c69d5bbfd80350fdf2022395877c013d14397f099c729b9f44b94d62d127ea \
-                    size    9584376
+checksums           rmd160  fadd682f983ce64156754a8889d2049a664c2f3b \
+                    sha256  b3be68f1207076e539268f0c502a7d399e798c18f6998860dbf0bdf80eb77f44 \
+                    size    9406163
 
-# The build process requires Go modules.  So remove the environment setting
-# GO111MODULE=off:
-build.env-delete    GO111MODULE=off
-build.cmd           ${go.bin} run
-build.args          _scripts/make.go build --no-git
+post-extract {
+    reinplace -E s|@go|@${go.bin}| ${worksrcpath}/Makefile
+}
 
-set delve_doc_dir   ${prefix}/share/doc/${name}
+build.cmd           make
+build.target        build
 
 notes               "delve is installed as dlv"
 
 destroot {
+    set delve_doc_dir ${prefix}/share/doc/${name}
+
     xinstall -m 0755 ${worksrcpath}/dlv ${destroot}${prefix}/bin/
     xinstall -d ${destroot}${delve_doc_dir}
     copy {*}[glob ${worksrcpath}/Documentation/*] ${destroot}${delve_doc_dir}/

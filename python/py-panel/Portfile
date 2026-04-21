@@ -5,7 +5,7 @@ PortGroup           python 1.0
 PortGroup           select 1.0
 
 name                py-panel
-version             1.8.6
+version             1.8.10
 revision            0
 
 categories-append   graphics devel
@@ -20,9 +20,9 @@ homepage            https://panel.holoviz.org
 supported_archs     noarch
 platforms           {darwin any}
 
-checksums           rmd160  87625ca353d8b7cc621ce32e13f89e96945947c8 \
-                    sha256  e1570f2042c04bd6cf458e3d5f0bb8319d12ee7f6cb247814a5378ab205c70b9 \
-                    size    32124631
+checksums           rmd160  b38de27d226843cf314d42c94211ab3f9cafa00d \
+                    sha256  762881b06efb99f3d201749a3634c6b5f18f46cfca520970c2c1bb31bed42c90 \
+                    size    32186528
 
 python.versions     310 311 312 313 314
 

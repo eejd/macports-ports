@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           python 1.0
 
 name                py-param
-version             2.3.1
+version             2.3.3
 revision            0
 
 license             BSD
@@ -19,9 +19,9 @@ homepage            https://github.com/holoviz/param
 supported_archs     noarch
 platforms           {darwin any}
 
-checksums           rmd160  ed35226b893eb8832a3d05a824173dcf7942ebd5 \
-                    sha256  84e59fc3a9bfb0e4c8100eb92d5be529deea3ec9c1f0881a0068c5caf31f21f3 \
-                    size    201772
+checksums           rmd160  b912b808c4e538b7246deccd59ec5699aa35fcd8 \
+                    sha256  43c24345d287d4abda15eac65b5b15d55f178a393421f0bfca02a77dd6c0d1dd \
+                    size    202196
 
 python.versions     310 311 312 313 314
 

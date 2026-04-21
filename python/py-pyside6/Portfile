@@ -5,7 +5,7 @@ PortGroup           python 1.0
 PortGroup           qt6 1.0
 
 name                py-pyside6
-revision            1
+revision            0
 categories-append   devel aqua
 
 maintainers         {@johankytt gmail.com:johan.kytt} openmaintainer
@@ -24,10 +24,10 @@ homepage            https://pyside.org/
 
 # Qt 6.8 is not supported on macOS 13 (Darwin 22)
 if {[vercmp ${qt6.version} 6.8] >= 0} {
-    version 6.10.0
-    checksums           rmd160  98c4bd8cc54f77a63d5cd68c6787cbe79ac52ec3 \
-                        sha256  f6e18dc880f59fb6c5c37f9f408971d65642dfc7510a15d794b4a3a8e15fcecc \
-                        size    17758096
+    version 6.11.0
+    checksums           rmd160  f47b86f3e4755beb02a2ab2db787b777a29ec0fb \
+                        sha256  48d5c44d7c3ed861055d5491486e6a220ef5006573cae01a5fae3fb69d786336 \
+                        size    18017608
 
     set clang_version   19
     # Same clang version as for qt6-qtbase
@@ -55,6 +55,8 @@ if {${name} ne ${subport}} {
     }
 
     depends_lib-append \
+        port:libxml2 \
+        port:libxslt \
         port:py${python.version}-numpy
 
     depends_build-append \
@@ -114,6 +116,14 @@ if {${name} ne ${subport}} {
             qthttpserver \
             qtquickeffectmaker \
             qtgraphs
+    }
+
+    post-destroot {
+        # Python 3.14 has trouble extracting IMPORTED_LOCATION even with extra cmake files
+        # This is the workaround
+        ln -s ../[file tail {*}[glob ${destroot}${python.pkgd}/PySide6/libpyside6.abi3*.dylib]] ${destroot}${python.pkgd}/PySide6/lib/libpyside6.abi3.dylib
+        ln -s ../[file tail {*}[glob ${destroot}${python.pkgd}/PySide6/libpyside6.abi3*.dylib]] ${destroot}${python.pkgd}/PySide6/lib/libpyside6qml.abi3.dylib
+        ln -s ../[file tail {*}[glob ${destroot}${python.pkgd}/shiboken6/libshiboken6.abi3*.dylib]] ${destroot}${python.pkgd}/shiboken6/lib/libshiboken6.abi3.dylib
     }
 
     # Global soversion for cmake/pc files variant

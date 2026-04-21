@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-set ver             2026-01
+set ver             2026-04
 github.setup        odin-lang odin ${ver} dev-
 github.tarball_from archive
 version             0.[string map {- .} ${ver}]
@@ -21,14 +21,14 @@ long_description    Odin is a general-purpose programming language with \
 
 homepage            https://odin-lang.org/
 
-set llvm_version    21
+set llvm_version    22
 
 depends_lib         port:llvm-${llvm_version} \
                     port:libiconv
 
-checksums           rmd160  c608a811caa2b1b6b6b38f4d5755e60f0f6bdfae \
-                    sha256  6a57c4c9a70e7be945d5e86540723f0097c541286cb4ac8dec09159ae877944a \
-                    size    147388145
+checksums           rmd160  8e2b22b613923b94d87402417b919c0336ee4d0b \
+                    sha256  955016112e1e59c2d5bb23b1aae07410634f0394d83dac3220462d94523ca624 \
+                    size    148837624
 
 patchfiles          patch-build.diff patch-raylib.diff
 

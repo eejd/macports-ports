@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           perl5 1.0
 
 perl5.branches      5.28 5.30 5.32 5.34
-perl5.setup         Mail-Message 4.03 ../../authors/id/M/MA/MARKOV
+perl5.setup         Mail-Message 4.05 ../../authors/id/M/MA/MARKOV
 revision            0
 license             {Artistic-1 GPL}
 maintainers         nomaintainer
@@ -14,9 +14,9 @@ long_description    {*}${description}
 platforms           {darwin any}
 supported_archs     noarch
 
-checksums           rmd160  a0dfc7880c332c2ddb2a9f43381e742444b41566 \
-                    sha256  fc2f45df8a74a757bdf4fd13d342a4d013702a116425f4e2a649c1b61d15e3af \
-                    size    260678
+checksums           rmd160  d137b46c33407d63b5993c4ae46bb56cd0a63fff \
+                    sha256  a5bcd238fe95ec158feb7f987968460ac230d2f862f67df3472328302d214905 \
+                    size    263026
 
 if {${perl5.major} != ""} {
     depends_lib-append \

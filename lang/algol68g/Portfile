@@ -3,7 +3,7 @@
 PortSystem          1.0
 
 name                algol68g
-version             3.10.7
+version             3.11.1
 revision            0
 categories          lang algol devel
 license             GPL-3
@@ -15,9 +15,9 @@ long_description    Algol68G is an implementation of Algol 68 as defined by the 
 homepage            https://jmvdveer.home.xs4all.nl/algol.html
 master_sites        https://jmvdveer.home.xs4all.nl
 
-checksums           rmd160  70ff0601dd8895a338e8b0dda621e7c252b2cb05 \
-                    sha256  b447698d7c2c409a23cbd9fa3f6668ec982ee7769438aab564813f548666ebd6 \
-                    size    673224
+checksums           rmd160  79e44bd3dae0d34ef44857a9fba44ece0d56dac2 \
+                    sha256  53004c643832b0b67d83aadf7392310a06f8a3ecdd98f413ece437b7970befa8 \
+                    size    680752
 
 extract.rename      yes
 

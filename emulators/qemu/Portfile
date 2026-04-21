@@ -2,13 +2,13 @@
 
 PortSystem              1.0
 PortGroup               active_variants 1.1
-PortGroup               legacysupport 1.1
+PortGroup               legacysupport   1.1
 
 # clock_gettime
 legacysupport.newest_darwin_requires_legacy 16
 
 name                    qemu
-version                 10.2.0
+version                 10.2.2
 revision                0
 categories              emulators
 license                 GPL-2+
@@ -26,9 +26,9 @@ homepage                https://www.qemu.org
 master_sites            https://download.qemu.org/
 use_xz                  yes
 
-checksums               rmd160  4bdbbdea429db677f4f2bc2f9d8de32e4a5b3384 \
-                        sha256  9e30ad1b8b9f7b4463001582d1ab297f39cfccea5d08540c0ca6d6672785883a \
-                        size    141093360
+checksums               rmd160  ab1526c25a295b7592c9efb5cebba64fcb164a90 \
+                        sha256  784b296ff29c1417aa72323abcb2d2ea9ab9771724f577dcd785c3b04f21e176 \
+                        size    141119364
 
 set py_branch           3.14
 set py_version          [string replace ${py_branch} 1 1]

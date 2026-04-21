@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/noborus/ov 0.50.2 v
+go.setup            github.com/noborus/ov 0.52.0 v
 go.offline_build    no
 revision            0
 
@@ -18,9 +18,9 @@ license             MIT
 maintainers         {gmail.com:herby.gillot @herbygillot} \
                     openmaintainer
 
-checksums           rmd160  0397506b5140fdde75cecdada46a1d214972ca09 \
-                    sha256  86277c652d1568807a61236d1565bbe8b2280be4f11a6075a03cd7581469d355 \
-                    size    3601614
+checksums           rmd160  62add318b79a6437b08a33ee0904f69805a746bf \
+                    sha256  0e119032077f14370e3dbf9eacd272e791784b9199e35b4abddc7bfe9f312ad4 \
+                    size    3834938
 
 build.cmd           make
 build.pre_args-append \

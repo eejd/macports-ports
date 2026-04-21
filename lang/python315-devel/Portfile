@@ -5,7 +5,7 @@ PortSystem 1.0
 name                python315-devel
 
 # Remember to keep py315-tkinter and py315-gdbm's versions sync'd with this
-version             3.15.0a5
+version             3.15.0a8
 
 set branch          [join [lrange [split ${version} .] 0 1] .]
 categories          lang
@@ -22,8 +22,8 @@ master_sites        ${homepage}ftp/python/3.15.0/
 
 distname            Python-${version}
 use_xz              yes
-checksums           rmd160 974b4c57c6090e2ede794818e0ebc13b3914cfc6 \
-                    sha256 fee40da6450b67547c079dcb2852e8a03db6d57e06415466b2d3294449db22ef
+checksums           rmd160 b5f04f03f1a0d282ba04705afe1dea4fd51e1fae \
+                    sha256 28f1b6358609042ebcc81488ec24569519f50804bb07dc23cc707b281b031c69
 
 patchfiles          patch-configure.diff \
                     Makefile.pre.in.patch \
@@ -31,9 +31,7 @@ patchfiles          patch-configure.diff \
                     configure-disable-libuuid.patch \
                     configure-disable-tkinter.patch \
                     configure-disable-system-libffi.patch \
-                    perf-trampoline.patch \
-                    _remote_debugging_subprocess.c.patch \
-                    pycore_optimizer_types.h.patch
+                    pystrhex.c.patch
 
 depends_build       path:bin/pkg-config:pkgconfig
 depends_lib         port:bzip2 \
@@ -123,7 +121,7 @@ if {$subport eq $name} {
 }
 
 platform darwin {
-    if {${os.major} < 11} {
+    if {$subport eq $name && [vercmp $macosx_deployment_target < 10.7]} {
         configure.args-append   --without-mimalloc
     }
     if {[vercmp $macosx_deployment_target <= 10.5]} {
@@ -134,7 +132,7 @@ platform darwin {
     post-configure {
         # poll() misbehaves on 10.8 and older
         # See https://trac.macports.org/ticket/18376
-        if {${os.major} <= 12} {
+        if {[vercmp $macosx_deployment_target <= 10.8]} {
             system -W ${worksrcpath} "ed - pyconfig.h < ${filespath}/pyconfig.ed"
         }
     }

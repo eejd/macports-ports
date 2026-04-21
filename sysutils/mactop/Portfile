@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/metaspartan/mactop 2.0.8 v
+go.setup            github.com/metaspartan/mactop 2.1.2 v
 go.package          github.com/metaspartan/mactop/v2
 github.tarball_from archive
 revision            0
@@ -24,9 +24,9 @@ maintainers         {gmail.com:herby.gillot @herbygillot} \
                     openmaintainer
 platforms           {darwin >= 18}
 
-checksums           rmd160  9a44c72fb937a75fc1274435721f7423ab427986 \
-                    sha256  46ab8e026cf295544530c7b5fed6aa7013b9ad8ab0643bf0ac343a39f59b864d \
-                    size    14845335
+checksums           rmd160  e6f0119dfee69d6a3a12d2f8b1c1881bf89333d5 \
+                    sha256  3ebfacea4ad9e4f570a1425f02263cb2d76c6df24a2523ed7312ba42701d2468 \
+                    size    14911139
 
 go.offline_build    no
 

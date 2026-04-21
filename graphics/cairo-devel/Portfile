@@ -41,7 +41,7 @@ long_description            ${description}. It is designed to produce \
 # Disable unexpected download of subprojects
 meson.wrap_mode             nodownload
 
-set py_ver                  3.12
+set py_ver                  3.14
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 configure.python            ${prefix}/bin/python${py_ver}
 
@@ -65,7 +65,7 @@ depends_lib-append \
                             port:expat \
                             port:fontconfig \
                             port:freetype \
-                            path:lib/pkgconfig/glib-2.0.pc:glib2 \
+                            path:lib/pkgconfig/glib-2.0.pc:glib2-devel \
                             path:lib/pkgconfig/pixman-1.pc:libpixman \
                             port:libpng \
                             port:lzo2 \

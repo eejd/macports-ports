@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           python 1.0
 
 name                google-cloud-sdk
-version             553.0.0
+version             565.0.0
 revision            0
 categories          devel python
 license             Apache-2
@@ -21,19 +21,19 @@ supported_archs     i386 x86_64 arm64
 
 if { ${configure.build_arch} eq "i386" } {
     set arch_classifier x86
-    checksums       rmd160  dcc83d4ff4e071e32f9dc45d19dd1f1efa97a2b4 \
-                    sha256  15396952526d201481a273f2c83e7faa89aa5408b3bd2cd09e8bbe542a27fb34 \
-                    size    56737532
+    checksums       rmd160  77041304ff885c23b53620718471f32e4c993ce3 \
+                    sha256  f63cccd550f6fb3000dcccb3d0d8ee92b1a34894094912e141fdee8fda8f5159 \
+                    size    58605544
 } elseif { ${configure.build_arch} eq "x86_64" } {
     set arch_classifier x86_64
-    checksums       rmd160  7c1743043b0d9716c7814531ec97dccba604ff64 \
-                    sha256  34d07c78af4fda7576fed00034b248a10019b6c93587bc8c63ba41b5f23b13b7 \
-                    size    58307029
+    checksums       rmd160  47d9667180e86efba028554a103f4a48e9214fb9 \
+                    sha256  10b446c52ad9dfb70f0a8134bf37932610eb790e340960a1351fab35a7c9d9c3 \
+                    size    60262777
 } elseif { ${configure.build_arch} eq "arm64" } {
     set arch_classifier arm
-    checksums       rmd160  af4160b76275fa467fbc06793cdd8fa22dbdd871 \
-                    sha256  769db9b201dca34d9c19935db8dc3f0c1b1cde1b5ff1bb06d6ce3623dd29c68e \
-                    size    58234434
+    checksums       rmd160  49e115474f242d19cfeb9be685ff2d86178a4a71 \
+                    sha256  8d1980d5d43041850b10c75409a755538d23459cb6815d2c9dd3a172ff03f0ac \
+                    size    60166391
 } else {
     set arch_classifier invalid
 }
@@ -46,29 +46,9 @@ master_sites        https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/
 worksrcdir          ${name}
 
 # Most recent Python version that is compatible with both
-# glcoud (https://cloud.google.com/sdk/docs/install#mac) and
-# gsutil (https://cloud.google.com/storage/docs/gsutil_install#before_you_begin)
+# glcoud (https://docs.cloud.google.com/sdk/docs/install-sdk#mac) and
+# gsutil (https://docs.cloud.google.com/storage/docs/gsutil_install#specifications)
 python.default_version 313
-
-post-patch {
-    # Default to the MacPorts Python binary
-    reinplace "s|CLOUDSDK_PYTHON=\$(order_python .*|CLOUDSDK_PYTHON=${python.bin}|" \
-        ${worksrcpath}/bin/bq \
-        ${worksrcpath}/bin/docker-credential-gcloud \
-        ${worksrcpath}/bin/git-credential-gcloud.sh \
-        ${worksrcpath}/bin/gcloud \
-        ${worksrcpath}/bin/gsutil \
-        ${worksrcpath}/bin/java_dev_appserver.sh
-
-    reinplace "s|^#!/usr/bin/env python$|#!${python.bin}|" \
-        ${worksrcpath}/bin/dev_appserver.py
-
-    # Disable updater
-    reinplace "s|\"disable_updater\": false|\"disable_updater\": true|" ${worksrcpath}/lib/googlecloudsdk/core/config.json
-}
-
-use_configure       no
-build               {}
 
 # MacPorts variants are not allowed to contain '-' and gcloud component names use both '-' and '_',
 # so each variant adds an explicit mapping from variant name to gcloud component name.
@@ -108,10 +88,12 @@ variant package_go_module description {Add Artifact Registry Go Module Package H
 variant pkg description {Add pkg} { dict set variant_to_component pkg pkg }
 variant pubsub_emulator description {Add Cloud Pub/Sub Emulator} { dict set variant_to_component pubsub_emulator pubsub-emulator }
 variant spanner_cli description {Add Spanner CLI} { dict set variant_to_component spanner_cli spanner-cli }
+variant spanner_migration_tool description {Add Spanner migration tool} { dict set variant_to_component spanner_migration_tool spanner-migration-tool }
 variant skaffold description {Add Skaffold} { dict set variant_to_component skaffold skaffold }
 variant terraform_tools description {Add Terraform Tools} { dict set variant_to_component terraform_tools terraform-tools }
 
-patch {
+use_configure       no
+build {
     # Define the basic installation command
     set install_command "CLOUDSDK_CONFIG=${worksrcpath}/.config CLOUDSDK_PYTHON=${python.bin} ./install.sh \
         --usage-reporting false \
@@ -136,6 +118,21 @@ patch {
 
     # Run installer script
     system -W ${worksrcpath} ${install_command}
+
+    # Default to the MacPorts Python binary
+    reinplace "s|CLOUDSDK_PYTHON=\$(order_python .*|CLOUDSDK_PYTHON=${python.bin}|" \
+        ${worksrcpath}/bin/bq \
+        ${worksrcpath}/bin/docker-credential-gcloud \
+        ${worksrcpath}/bin/git-credential-gcloud.sh \
+        ${worksrcpath}/bin/gcloud \
+        ${worksrcpath}/bin/gsutil \
+        ${worksrcpath}/bin/java_dev_appserver.sh
+
+    reinplace "s|^#!/usr/bin/env python$|#!${python.bin}|" \
+        ${worksrcpath}/bin/dev_appserver.py
+
+    # Disable updater
+    reinplace "s|\"disable_updater\": false|\"disable_updater\": true|" ${worksrcpath}/lib/googlecloudsdk/core/config.json
 }
 
 test.run    yes

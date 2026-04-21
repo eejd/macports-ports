@@ -3,8 +3,8 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/apernet/hysteria 2.7.0 app/v
-set git-commit      44a5643535bf63760659b2a8c76fde6330792ab8
+go.setup            github.com/apernet/hysteria 2.8.1 app/v
+set git-commit      25a2530ac786a180dd8e4f3bce0c69a3a7954d83
 # This line is for displaying commit in CLI only
 revision            0
 categories          net
@@ -16,9 +16,9 @@ long_description    Hysteria is a feature-packed network utility optimized for n
                     (e.g. satellite connections, congested public Wi-Fi, cross-country connection) \
                     powered by a custom version of QUIC protocol.
 
-checksums           rmd160  8734ec3b0bfb48ba9dd280474ceea2d233cda9e2 \
-                    sha256  3cac6adeccdac7cc8b353948e3cead1eb8606aa8ce74dac4853d821a22ceeba7 \
-                    size    4462896
+checksums           rmd160  76ded47eb1edde78ef1ac5c93fc5a99beea979c9 \
+                    sha256  11cec7a7c0e366e1cc2ac9e0a83eb89fada88bb9089bc4b1f842dbf720dedf8d \
+                    size    4462158
 
 # Notes for updating this port:
 # Remember to update git commit hash

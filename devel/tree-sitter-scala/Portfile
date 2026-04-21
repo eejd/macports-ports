@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           tree_sitter 1.0
 
-github.setup        tree-sitter tree-sitter-scala 0.24.0 v
+github.setup        tree-sitter tree-sitter-scala 0.26.0 v
 github.tarball_from archive
 revision            0
 
@@ -16,9 +16,9 @@ categories          devel
 license             MIT
 maintainers         {amake @amake} openmaintainer
 
-checksums           rmd160  362034e9bd4e182247f3d201070f7be641405f2e \
-                    sha256  6ba17e09ba035a4a1b19db7906b87ec2c56cf400073e8e7272e8bdc9413921f8 \
-                    size    1384606
+checksums           rmd160  6687bef6d1b0a00229b4da6484f82615c89079f5 \
+                    sha256  ab3d79043b9b07dbda407ce4b9fcb07ece2b3e1892966eaf2092294b39745d52 \
+                    size    1738342
 
 worksrcdir          ${worksrcdir}/src
 

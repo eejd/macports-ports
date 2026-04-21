@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           qt6 1.0
 
-github.setup        radareorg iaito 6.0.8
+github.setup        radareorg iaito 6.1.2
 github.tarball_from archive
 revision            0
 
@@ -21,9 +21,9 @@ long_description    iaito (formerly Cutter) is a free and open-source reverse en
 
 homepage            https://www.radare.org/n/iaito.html
 
-checksums           rmd160  30eb94f4e4cff1c995290cc5af99bc8762500d76 \
-                    sha256  d6446bffd944c316faa31dc1017aedf85528e6ecc755d7480cfda988f707f527 \
-                    size    2963132
+checksums           rmd160  dfe8c10041ff1f1d0d3cf9194e7064a0de2ef942 \
+                    sha256  29c9f0bbef15a1f004e598e3de7a74b4fde2245cae21f9a44d852fd9fc16a661 \
+                    size    2974217
 # port prone to stealth upgrade after release, consider waiting for a few days before updating to a new version
 
 depends_build-append \

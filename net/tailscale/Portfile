@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/tailscale/tailscale 1.94.0 v
+go.setup            github.com/tailscale/tailscale 1.96.5 v
 go.package          tailscale.com
 go.offline_build    no
 revision            0
@@ -22,9 +22,9 @@ license             BSD
 maintainers         {gmail.com:herby.gillot @herbygillot} \
                     openmaintainer
 
-checksums           rmd160  878afe2c594fec79c9de974cb9cd0fbd6018692d \
-                    sha256  2a535948afa0da70265f112205cc2783a0d51d68338fc99459aba87fe09b16f7 \
-                    size    4451186
+checksums           rmd160  e0bbaeabe730147de0e6945ddf1eeb713fa174e8 \
+                    sha256  67fd4cb847f51d54feab8efeba915883304be276ce1c58a44a047bd62fd761db \
+                    size    4527087
 
 startupitem.create  yes
 startupitem.executable \
@@ -32,9 +32,9 @@ startupitem.executable \
 
 build.pre_args-append \
     -ldflags \" \
-        -X tailscale.com/version.Long=${version}    \
-        -X tailscale.com/version.Short=${version}   \
-        -X tailscale.com/version.GitCommit=non-git  \
+        -X tailscale.com/version.longStamp=${version}    \
+        -X tailscale.com/version.shortStamp=${version}   \
+        -X tailscale.com/version.gitCommitStamp=non-git  \
     \"
 
 build.args-append   -o _build ./cmd/${name} ./cmd/${name}d

@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/atinylittleshell/gsh 1.3.2 v
+go.setup            github.com/atinylittleshell/gsh 1.8.1 v
 go.offline_build    no
 revision            0
 
@@ -17,9 +17,9 @@ license             GPL-3
 maintainers         {gmail.com:herby.gillot @herbygillot} \
                     openmaintainer
 
-checksums           rmd160  b32321e8a4e8437737dc483cd8cdbd9983c2dcd1 \
-                    sha256  6a6bb443e2bdd7d2ebcca890483e1647b0febde03bf7ecf729e53bb3e9733a4a \
-                    size    2113669
+checksums           rmd160  738277fc8e853b09b1f2ee3b973ae04c8a924ed3 \
+                    sha256  47a1dd4506a24e59862d9dc2862cc091e1bb26e5eada18d4b82aaeb991460dfa \
+                    size    2127889
 
 build.pre_args-append \
     -ldflags \" -X main.BUILD_VERSION=${version} \"

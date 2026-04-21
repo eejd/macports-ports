@@ -8,7 +8,6 @@ categories          lang pascal
 platforms           macosx
 license             {GPL-2 LGPL-2}
 maintainers         {@kamischi web.de:karl-michael.schindler} \
-                    {@barracuda156 gmail.com:vital.had} \
                     openmaintainer
 description         Free Pascal, an open source Pascal and Object Pascal \
                     compiler.
@@ -78,6 +77,18 @@ universal_variant   no
 
 set fpcbasepath     ${prefix}/libexec/${name}
 
+# this patch fixes the procedure "put" for textfiles in ISO-mode.
+# the patch is based on this commit:
+# https://gitlab.com/freepascal.org/fpc/source/-/commit/a0e4a7168d741bcc38a827aca86dd434f3762ac2
+# version 3.2.4 and up need to be checked, whether to include this patch or not.
+patchfiles-append   text.inc.patch
+
+# this patch fixes the procedure "reset" for typed files in ISO-mode.
+# the patch is based on a commit:
+# https://gitlab.com/freepascal.org/fpc/source/-/commit/0de9d0422c32852ad338e3e2c3e0054aa211b2c3
+# version 3.2.4 and up need to be checked, whether to include this patch or not.
+patchfiles-append   typefile.inc.patch
+
 if {${os.platform} eq "darwin" && ${os.major} >= 22} { # macOS 13, Ventura
 # fix obsolete linker options
     patchfiles-append   t_darwin.pas.patch
@@ -85,7 +96,7 @@ if {${os.platform} eq "darwin" && ${os.major} >= 22} { # macOS 13, Ventura
 
 if {${os.platform} eq "darwin" && ${os.major} >= 24 && ${build_arch} eq "x86_64"} { # macOS 15, Sequoia
 # this fix will be part of version 3.2.4
-    patchfiles-append   rautils.patch
+    patchfiles-append   rautils.pas.patch
 }
 
 subport "chmcmd-${name}" {
@@ -117,7 +128,10 @@ subport "chmcmd-${name}" {
     configure.args  -r -v Makefile.fpc.fpcmake
     configure.post_args
 
-    patchfiles-delete   t_darwin.pas.patch
+    patchfiles-delete \
+                    t_darwin.pas.patch \
+                    text.inc.patch \
+                    typefile.inc.patch
 
     build.env       PREFIX=${prefix}
     build.target
@@ -129,7 +143,7 @@ subport "chmcmd-${name}" {
 }
 
 subport "${name}-cross" {
-    revision        0
+    revision        1
 
     description     FreePascal common cross-compiler binaries
     long_description \
@@ -143,7 +157,11 @@ subport "${name}-cross" {
 
     worksrcdir      ${name}build-${version}/fpcsrc/compiler
     use_configure   no
-    patch.pre_args-replace  -p0 -p1
+    patchfiles-delete \
+                    text.inc.patch \
+                    typefile.inc.patch
+    patch.pre_args-replace \
+                    -p0 -p1
     build.args      OPT="-ap -v0"
     build.target    aarch64 arm avr i386 i8086 jvm m68k mips mipsel \
                     powerpc powerpc64 sparc sparc64 x86_64
@@ -184,7 +202,7 @@ subport "${name}-cross" {
 }
 
 subport "${name}-cross-arm-wince" {
-    revision                1
+    revision                3
     categories-append       cross
     supported_archs         noarch
     worksrcdir              fpcbuild-${version}/fpcsrc
@@ -219,7 +237,7 @@ subport "${name}-cross-arm-wince" {
 
 foreach ostarget {nativent win32 wince} {
     subport "${name}-cross-i386-$ostarget" {
-        revision                1
+        revision                3
         categories-append       cross
         supported_archs         i386 x86_64 noarch
         worksrcdir              fpcbuild-${version}/fpcsrc
@@ -258,11 +276,11 @@ subport "${name}-cross-x86-64-win64" {
     PortGroup   obsolete 1.0
 
     replaced_by ${name}-cross-x86_64-win64
-    revision    1
+    revision    2
 }
 
 subport "${name}-cross-x86_64-win64" {
-    revision                1
+    revision                3
     categories-append       cross
     supported_archs         noarch
     worksrcdir              fpcbuild-${version}/fpcsrc
@@ -298,7 +316,7 @@ subport "${name}-cross-x86_64-win64" {
 # may also support: Linux6432 embedded solaris AROS Android Haiku
 foreach ostarget {linux dragonfly freebsd netbsd openbsd} {
     subport "${name}-cross-x86_64-$ostarget" {
-        revision                1
+        revision                3
         categories-append       cross
         supported_archs         i386 x86_64 noarch
         worksrcdir              fpcbuild-${version}/fpcsrc
@@ -336,7 +354,7 @@ foreach ostarget {linux dragonfly freebsd netbsd openbsd} {
 # may also support: amiga macosclassic darwin morphos embedded wii aix
 foreach ostarget {linux netbsd} {
     subport "${name}-cross-powerpc-$ostarget" {
-        revision                1
+        revision                3
         categories-append       cross
         supported_archs         noarch
         worksrcdir              fpcbuild-${version}/fpcsrc
@@ -371,8 +389,46 @@ foreach ostarget {linux netbsd} {
     }
 }
 
+# may also support: amiga atari MacOSClassic palmos
+foreach ostarget {linux netbsd embedded} {
+    subport "${name}-cross-m68k-$ostarget" {
+        revision                0
+        categories-append       cross
+        supported_archs         noarch
+        worksrcdir              fpcbuild-${version}/fpcsrc
+        use_parallel_build      no
+        use_configure           no
+        depends_build-append    port:${name} port:${name}-cross port:m68k-${ostarget}-binutils
+        build.target            rtl packages
+        destroot.target         rtl_install packages_install
+        test.target
+
+# target specifics
+        description     FPC cross-compiler for m68k-$ostarget
+        long_description \
+            This Pascal crosscompiler produces m68k executables, \
+            which run natively on m68k-$ostarget systems. \n \
+            Get help with: \n \
+            fpc -h \n \
+            Compile and link a Pascal file with: \n \
+            \n \
+            fpc -Pm68k -T$ostarget FILENAME
+
+        build.args      PP=ppc68k CPU_TARGET=m68k OS_TARGET=$ostarget \
+                        OPT="-ap -v0"
+        destroot.args   CPU_TARGET=m68k OS_TARGET=$ostarget CROSSINSTALL=1 \
+                        INSTALL_PREFIX=${destroot}${prefix}/libexec/fpc/
+
+# remove duplicate doc and bin files
+        post-destroot   {
+            file delete -force ${destroot}${prefix}/libexec/fpc/share
+            file delete -force ${destroot}${prefix}/libexec/fpc/bin
+        }
+    }
+}
+
 if {${subport} eq "${name}"} {
-    revision            1
+    revision            3
 
     installs_libs       yes
 
@@ -457,7 +513,7 @@ if {${subport} eq "${name}"} {
             set otherOptions "-WM10.9"
         } elseif {${configure.build_arch} in [list ppc ppc64]} {
             # Relevant only for macOS PowerPC
-            patchfiles-append patch-powerpc.diff
+            patchfiles-append powerpc.patch
             # On Tiger building is trivial
             if {${os.major} == 8} {
                 set otherOptions "-WM10.4"
